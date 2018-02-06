@@ -11,6 +11,18 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <errno.h>
+#include <limits.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <stdarg.h>
+#include <string.h>
+#include <netdb.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <time.h>
+
+
 void menu();
 
 int main() {
@@ -20,19 +32,19 @@ int main() {
 		menu();	
 		printf("%s", "Selection: ");
 		int selection = 0;
-		scanf("%d\n", &selection);
+		scanf("%d", &selection);
 		switch(selection) {
 			case 1:
-				printf("%s\n", "Temp is ....");
+				printf("\n%s\n\n", "Temp is ....");
 				break;
 			case 2:
-				printf("%s\n", "Wind is ....");
+				printf("\n%s\n\n", "Wind is ....");
 				break;
 			case 3:
-				printf("%s\n","Something is....");
+				printf("\n%s\n\n","Something is....");
 				break;
 			case 4:
-				printf("%s\n","GOODBYE!!");
+				printf("\n%s\n\n","GOODBYE!!");
 				exit(0);
 			default:
 				printf("\n\n%s\n\n","***INVALID OPTION");
