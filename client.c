@@ -22,14 +22,23 @@
 #include <unistd.h>
 #include <time.h>
 
+#define BUFF_SIZE 1024
 
 void menu();
+int connectToHost(char *hostname, char *port);
+void send_or_exit(int fd, char *buff, size_t buff_len);
+void recv_or_exit(int fd, char *buff, size_t max_len);
 
 int main() {
     printf("%s\n", "WELCOME TO COMP 375 SENSOR NETWORK :)");
 	printf("\n\n");
-    //int fd = connectToHost("comp375.sandiego.edu", "44144");
-	while(1) {
+    int fd = connectToHost("comp375.sandiego.edu", "44144");
+	
+    char buff[BUFF_SIZE];
+    memset(buff,0,BUFF_SIZE);
+    
+
+    while(1) {
 		menu();	
 		printf("%s", "Selection: ");
 		int selection = 0;
@@ -37,18 +46,33 @@ int main() {
 		switch(selection) {
 			case 1:
 				printf("\n%s\n\n", "Temp is ....");
+                
+                send_or_exit(fd,"LIST",4);
+
+                recv_or_exit(fd,buff,BUFF_SIZE);
+
+                char tmp_buff[BUFF_SIZE];
+                sscanf(buff,"ONLINE - %d",&BUFF_SIZE);
+
+                printf("The server says: %s\n", tmp_buff);
+                memset(buff,0,BUFF_SIZE);
+
 				break;
+
 			case 2:
 				printf("\n%s\n\n", "Wind is ....");
 				break;
+
 			case 3:
 				printf("\n%s\n\n","Something is....");
 				break;
-			case 4:
+			
+            case 4:
 				printf("\n%s\n\n","GOODBYE!!");
-			    // close(fd);
+			    close(fd);
                 exit(0);
                 break;
+            
             default:
 				printf("\n\n%s\n\n","***INVALID OPTION");
 		}
@@ -64,6 +88,13 @@ void menu() {
 	printf("%s\n\n", "\t(4)	Quit Program.");
 }
 
+/*
+ * Uses Socket interface to connect to a specified host at a particular port.
+ *
+ * @param hostname The name of the host to connect to (e.g. "foo.sandiego.edu")
+ * @param port The port number to connect to
+ * @result File descriptor of the socket we are now using 
+ */
 int connectToHost(char *hostname, char *port) {
     int status;
     struct addrinfo hints;
@@ -92,3 +123,31 @@ int connectToHost(char *hostname, char *port) {
     }
     return fd;
 }
+
+void send_or_exit(int fd, char *buff, size_t buff_len) {
+    int sent = send(fd, buff, buff_len, 0);
+    if(sent == 0) {
+        printf("Server connection closed unexpectedly. Good Bye. \n");
+        exit(1);
+    }
+    else if(sent == -1) {
+        perror("Send");
+        exit(1);
+    }
+    // TODO: if sent < buff_len, do another send to finish sending data
+}
+
+void recv_or_exit(int fd, char *buff, size_t max_len) {
+    int recvd = recv(fd, buff, max_len,0);
+    if(recvd == 0) {
+        printf("Server connection closed unexpectedly. Good Bye. \n");
+        exit(1);
+    }
+    else if(recvd == -1) {
+        perror("Recv");
+        exit(1);
+    }
+}
+
+
+
