@@ -52,7 +52,7 @@ int main() {
                 recv_or_exit(fd,buff,BUFF_SIZE);
 
                 char tmp_buff[BUFF_SIZE];
-                sscanf(buff,"ONLINE - %d",&BUFF_SIZE);
+                sscanf(buff,"ONLINE - %d",(int*)BUFF_SIZE);
 
                 printf("The server says: %s\n", tmp_buff);
                 memset(buff,0,BUFF_SIZE);
