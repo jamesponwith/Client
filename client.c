@@ -10,7 +10,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 #include <errno.h>
 #include <limits.h>
 #include <stdlib.h>
@@ -21,6 +20,8 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <time.h>
+
+#define _XOPEN_SOURCE 600
 
 #define BUFF_SIZE 1024
 
