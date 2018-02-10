@@ -7,9 +7,6 @@
  *
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <errno.h>
 #include <limits.h>
 #include <stdlib.h>
@@ -26,7 +23,9 @@
 #define BUFF_SIZE 1024
 
 void menu();
+long prompt();
 int connectToHost(char *hostname, char *port);
+void mainLoop(int fd);
 void send_or_exit(int fd, char *buff, size_t buff_len);
 void recv_or_exit(int fd, char *buff, size_t max_len);
 
@@ -34,10 +33,13 @@ int main() {
     printf("%s\n", "WELCOME TO COMP 375 SENSOR NETWORK :)");
 	printf("\n\n");
     int fd; // = connectToHost("comp375.sandiego.edu", "44144");
-	
+    fd = connectToHost("comp375.sandiego.edu", "47789");
+    mainLoop(fd);
     char buff[BUFF_SIZE];
     memset(buff,0,BUFF_SIZE);
-  
+    close(fd);
+    return 0;
+}  
 /*
 
     send_or_exit(fd,"  ",4);
@@ -52,17 +54,15 @@ int main() {
 
 */
 
-
+void mainLoop(int fd) {
     while(1) {
-		menu();	
-		printf("%s", "Selection: ");
-		int selection = 0;
-		scanf("%d", &selection);
-		switch(selection) {
+		long selection = prompt();
+        char buff[BUFF_SIZE];
+        memset(buff,0,BUFF_SIZE);
+        switch(selection) {
 			case 1:
 				// printf("\n%s\n\n", "Temp is ....");
                 
-                fd = connectToHost("comp375.sandiego.edu", "47789");
                 send_or_exit(fd,"AUTH password123\n",17);
                 recv_or_exit(fd,buff,BUFF_SIZE);
 
@@ -128,15 +128,54 @@ int main() {
 				printf("\n\n%s\n\n","***INVALID OPTION");
 		}
 	}
-	return 0;
 }
 
+/**
+ * Displays the menu
+ */
 void menu() {
 	printf("%s\n\n", "Which sensor would you like to access: ");
 	printf("%s\n", "\t(1)	Air Temperature.");
 	printf("%s\n", "\t(2)	Relative Humidity.");
 	printf("%s\n", "\t(3)	Wind Speed.");
 	printf("%s\n\n", "\t(4)	Quit Program.");
+}
+
+/**
+ * Print command prompt to user and obtain user input
+ *
+ * @return The user's desired selection, or -1 if invalid selection.
+ */
+long prompt() {
+    // Print menu options
+    menu();
+    printf("%s","Selection: ");
+    // Read in value from standard input
+    char input[10];
+    memset(input, 0, 10); // set all values of input[] to '\0'
+    char *read_str = fgets(input, 10, stdin);
+    if(read_str == NULL) {
+        if (feof(stdin)) {
+            exit(0);
+        }
+        else if(ferror(stdin)) {
+            perror("fgets");
+            exit(1);
+        }
+    }
+    
+    // get rid of newline, if there is one
+    char *new_line = strchr(input, '\n');
+    if(new_line != NULL) new_line[0] = '\0';
+    
+    // convert string to a long int
+    char *end;
+    long selection = strtol(input, &end, 10);
+
+    if(end == input || *end != '\0') {
+        selection = -1;
+    }
+    return selection;
 }
 
 /*
