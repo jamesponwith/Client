@@ -61,8 +61,8 @@ int main() {
 			case 1:
 				// printf("\n%s\n\n", "Temp is ....");
                 
-                fd = connectToHost("comp375.sandiego.edu", "58983");
-                send_or_exit(fd,"AUTH password123",4);
+                fd = connectToHost("comp375.sandiego.edu", "47789");
+                send_or_exit(fd,"AUTH password123\n",17);
                 recv_or_exit(fd,buff,BUFF_SIZE);
 
                 printf("%s\n", buff);
@@ -72,12 +72,16 @@ int main() {
               //  printf("The server says: %s\n", tmp_buff1);
                 memset(buff,0,BUFF_SIZE);
 
-                send_or_exit(fd,"AIR TEMPERATURE",4);
+                close(fd);
+
+                int fd = connectToHost("sensor.sandiego.edu", "54503");
+                
+                send_or_exit(fd,"AUTH sensorpass321\n",21);
 				recv_or_exit(fd,buff,BUFF_SIZE);
 
-                 memset(buff,0,BUFF_SIZE);
-                 
+                 printf("%s\n", buff);
 
+                 memset(buff,0,BUFF_SIZE);
                  
                  close(fd);
 
@@ -128,7 +132,7 @@ int main() {
 
 void menu() {
 	printf("%s\n\n", "Which sensor would you like to access: ");
-	printf("%s\n", "\t(1)	Temperature.");
+	printf("%s\n", "\t(1)	Air Temperature.");
 	printf("%s\n", "\t(2)	Relative Humidity.");
 	printf("%s\n", "\t(3)	Wind Speed.");
 	printf("%s\n\n", "\t(4)	Quit Program.");
