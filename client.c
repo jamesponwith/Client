@@ -32,11 +32,25 @@ void recv_or_exit(int fd, char *buff, size_t max_len);
 int main() {
     printf("%s\n", "WELCOME TO COMP 375 SENSOR NETWORK :)");
 	printf("\n\n");
-    int fd = connectToHost("comp375.sandiego.edu", "44144");
+    int fd; // = connectToHost("comp375.sandiego.edu", "44144");
 	
     char buff[BUFF_SIZE];
     memset(buff,0,BUFF_SIZE);
-    
+  
+/*
+
+    send_or_exit(fd,"  ",4);
+
+    recv_or_exit(fd,buff,BUFF_SIZE);
+
+  //  char tmp_buff1[BUFF_SIZE];
+  //  sscanf(buff,"ONLINE - %d",(int*)BUFF_SIZE);
+
+  //  printf("The server says: %s\n", tmp_buff1);
+  //  memset(buff,0,BUFF_SIZE);
+
+*/
+
 
     while(1) {
 		menu();	
@@ -45,27 +59,59 @@ int main() {
 		scanf("%d", &selection);
 		switch(selection) {
 			case 1:
-				printf("\n%s\n\n", "Temp is ....");
+				// printf("\n%s\n\n", "Temp is ....");
                 
-                send_or_exit(fd,"LIST",4);
-
+                fd = connectToHost("comp375.sandiego.edu", "58983");
+                send_or_exit(fd,"AUTH password123",4);
                 recv_or_exit(fd,buff,BUFF_SIZE);
 
-                char tmp_buff[BUFF_SIZE];
-                sscanf(buff,"ONLINE - %d",(int*)BUFF_SIZE);
+                printf("%s\n", buff);
+              //  char tmp_buff1[BUFF_SIZE];
+              //  sscanf(buff,"ONLINE - %d",(int*)BUFF_SIZE);
 
-                printf("The server says: %s\n", tmp_buff);
+              //  printf("The server says: %s\n", tmp_buff1);
                 memset(buff,0,BUFF_SIZE);
 
-				break;
+                send_or_exit(fd,"AIR TEMPERATURE",4);
+				recv_or_exit(fd,buff,BUFF_SIZE);
+
+                 memset(buff,0,BUFF_SIZE);
+                 
+
+                 
+                 close(fd);
+
+                break;
 
 			case 2:
 				printf("\n%s\n\n", "Wind is ....");
-				break;
+			
+                send_or_exit(fd,"RELATIVE HUMIDITY",4);
+
+                recv_or_exit(fd,buff,BUFF_SIZE);
+
+                char tmp_buff2[BUFF_SIZE];
+                sscanf(buff,"ONLINE - %d",(int*)BUFF_SIZE);
+
+                printf("The server says: %s\n", tmp_buff2);
+                memset(buff,0,BUFF_SIZE);
+
+                break;
 
 			case 3:
 				printf("\n%s\n\n","Something is....");
-				break;
+				
+                send_or_exit(fd,"WIND SPEED",4);
+
+                recv_or_exit(fd,buff,BUFF_SIZE);
+
+                char tmp_buff3[BUFF_SIZE];
+                sscanf(buff,"ONLINE - %d",(int*)BUFF_SIZE);
+
+                printf("The server says: %s\n", tmp_buff3);
+                memset(buff,0,BUFF_SIZE);
+                
+                break;
 			
             case 4:
 				printf("\n%s\n\n","GOODBYE!!");
@@ -134,7 +180,12 @@ void send_or_exit(int fd, char *buff, size_t buff_len) {
         perror("Send");
         exit(1);
     }
+    
     // TODO: if sent < buff_len, do another send to finish sending data
+    if(sent < (int) buff_len) {
+        send(fd, buff, buff_len, 0);
+    }
+
 }
 
 void recv_or_exit(int fd, char *buff, size_t max_len) {
@@ -148,6 +199,4 @@ void recv_or_exit(int fd, char *buff, size_t max_len) {
         exit(1);
     }
 }
-
-
 
