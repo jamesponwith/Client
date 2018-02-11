@@ -7,33 +7,33 @@
  *
  */
 
+#include <time.h>
+#include <netdb.h>
 #include <errno.h>
+#include <stdio.h>
 #include <limits.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
-#include <netdb.h>
-#include <arpa/inet.h>
 #include <unistd.h>
-#include <time.h>
-#include "parse_args.h"
+#include <arpa/inet.h>
 
-#define _XOPEN_SOURCE 600
+#include "parse_args.h"
 
 #define BUFF_SIZE 1024
 
+#define _XOPEN_SOURCE 600
+
 void menu();
 long prompt();
-int connectToHost(char *hostname, char *port);
 void mainLoop(int fd);
-void send_or_exit(int fd, char *buff, size_t buff_len);
-void recv_or_exit(int fd, char *buff, size_t max_len);
 void sensorInfo(int fd, char *selection);
+int connectToHost(char *hostname, char *port);
+void recv_or_exit(int fd, char *buff, size_t max_len);
+void send_or_exit(int fd, char *buff, size_t buff_len);
 
 int main() {
-    printf("%s\n", "WELCOME TO COMP 375 SENSOR NETWORK :)");
-    printf("\n\n");
+    printf("%s\n\n\n", "WELCOME TO COMP 375 SENSOR NETWORK :)");
     int fd; 
     fd = connectToHost("comp375.sandiego.edu", "47789");
     mainLoop(fd);
@@ -44,10 +44,10 @@ int main() {
 void mainLoop(int fd) {
     while(1) {
         long selection = prompt();
-        char *selec;
+        char *selec; // Provide sensorInfo() with the correct server message 
         switch(selection) {
             case 1:
-                selec = "AIR TEMPERATURE";
+                selec = "AIR TEMPERATURE"; // Option specific message
                 sensorInfo(fd, selec);
                 close(fd);
                 fd = connectToHost("comp375.sandiego.edu", "47789");
@@ -160,6 +160,13 @@ int connectToHost(char *hostname, char *port) {
     return fd;
 }
 
+/**
+ * Sends message over given socket or exits if something went wrong. 
+ *
+ * @param fd File descriptor to let client socker and server socket communicate 
+ * @param buff The buffer to store the message being sent
+ * @param buff_len The size of the message
+ */
 void send_or_exit(int fd, char *buff, size_t buff_len) {
     int sent = send(fd, buff, buff_len, 0);
     if(sent == 0) {
@@ -172,6 +179,14 @@ void send_or_exit(int fd, char *buff, size_t buff_len) {
     }
 }
 
+/**
+ * Receives message from given socket or exits if something went wrong
+ *
+ * @param fd File descriptor to let client socker and server socket communicate 
+ * @param buff The buffer to store the message being sent
+ * @param buff_len The size of the message
+ 
+ */
 void recv_or_exit(int fd, char *buff, size_t max_len) {
     int recvd = recv(fd, buff, max_len,0);
     if(recvd == 0) {
@@ -196,8 +211,8 @@ void sensorInfo(int fd, char *selection) {
     char buff[BUFF_SIZE];
     char *ret_buff[BUFF_SIZE];
 
-    send_or_exit(fd,"AUTH password123\n",17);
-    recv_or_exit(fd,buff,BUFF_SIZE);
+    send_or_exit(fd,"AUTH password123\n",17); // Send server message
+    recv_or_exit(fd,buff,BUFF_SIZE); // Receive server response in buff
 
     parseArguments(buff, ret_buff); // Parse server response
 
@@ -205,15 +220,15 @@ void sensorInfo(int fd, char *selection) {
     
     fd = connectToHost(ret_buff[1], ret_buff[2]); // Connect to sensor server and sensor port
     
-    send_or_exit(fd,"AUTH sensorpass321\n",21); // Send password to sensor
-    recv_or_exit(fd,buff,BUFF_SIZE); // Recieve server message
+    send_or_exit(fd,"AUTH sensorpass321\n",21); 
+    recv_or_exit(fd,buff,BUFF_SIZE); 
 
-    memset(buff,0,BUFF_SIZE); // Reset buffer for next message
+    memset(buff,0,BUFF_SIZE); 
 
-    send_or_exit(fd, selection, 17); // Request specific sensor information with selection 
+    send_or_exit(fd, selection, 17); // Request specific sensor information with selection variable 
     recv_or_exit(fd,buff,BUFF_SIZE); // Recieve data
 
-    memset(ret_buff,0,BUFF_SIZE); // Reset buffer for next message
+    memset(ret_buff,0,BUFF_SIZE); 
     
     parseArguments(buff,ret_buff); // Parse the data for display
 
@@ -225,11 +240,11 @@ void sensorInfo(int fd, char *selection) {
     printf("%s%s%s",ret_buff[1],ret_buff[2],", taken at ");
     printf("%s\n",ctime(&time)); 
 
-    memset(buff,0,BUFF_SIZE); // Reset buffer
+    memset(buff,0,BUFF_SIZE); 
 
     send_or_exit(fd,"CLOSE\n",BUFF_SIZE); // Send CLOSE message
     recv_or_exit(fd,buff,BUFF_SIZE);
 
-    memset(buff,0,BUFF_SIZE); // Reset buffer
+    memset(buff,0,BUFF_SIZE); 
     memset(ret_buff,0,BUFF_SIZE);
 }
