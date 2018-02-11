@@ -70,17 +70,15 @@ void mainLoop(int fd) {
                 recv_or_exit(fd,buff,BUFF_SIZE);
 
                 printf("%s\n", buff);
-              //  char tmp_buff1[BUFF_SIZE];
-              //  sscanf(buff,"ONLINE - %d",(int*)BUFF_SIZE);
                 parseArguments(buff, ret_buff);
-              
+                
+                            
                 unsigned int j = 0;
                 while(ret_buff[j] != NULL) {
                     printf("%s\n", ret_buff[j]);
                     j++;
                 }
 
-              //  printf("The server says: %s\n", tmp_buff1);
                 memset(buff,0,BUFF_SIZE);
 
                 fd = connectToHost(ret_buff[1], ret_buff[2]);
@@ -90,16 +88,35 @@ void mainLoop(int fd) {
                 
                 printf("%s\n", buff);
 
-
                 memset(buff,0,BUFF_SIZE);
 
                 //fd = connectToHost(ret_buff[1], ret_buff[2]);
 
-                send_or_exit(fd, "AIR TEMPERATURE\n", 16);
+                send_or_exit(fd, "AIR TEMPERATURE\n", 17);
                 recv_or_exit(fd,buff,BUFF_SIZE);
+               
+                printf("%s\n",buff);
                 
+                memset(ret_buff,0,BUFF_SIZE);
+                parseArguments(buff,ret_buff);
+
+                printf("%s%s%s\n",ret_buff[0],ret_buff[1], ret_buff[2]);
+                time_t time;
+                time = strtoul(ret_buff[0],NULL,0);
+
+                printf("%s","The AIR TEMPERATURE as of: ");
+                printf("%s%s",ctime(&time)," is "); 
+                printf("%s%s\n",ret_buff[1],ret_buff[2]);
+
                 memset(buff,0,BUFF_SIZE);
-                 
+                
+                send_or_exit(fd,"CLOSE\n",BUFF_SIZE);
+                recv_or_exit(fd,buff,BUFF_SIZE);
+
+                printf("%s\n",buff);
+
+                memset(buff,0,BUFF_SIZE);
+
                  close(fd);
 
                 break;
@@ -259,4 +276,5 @@ void recv_or_exit(int fd, char *buff, size_t max_len) {
         exit(1);
     }
 }
+
 
