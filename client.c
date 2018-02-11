@@ -83,16 +83,22 @@ void mainLoop(int fd) {
               //  printf("The server says: %s\n", tmp_buff1);
                 memset(buff,0,BUFF_SIZE);
 
-                close(fd);
+                fd = connectToHost(ret_buff[1], ret_buff[2]);
 
-                int fd = connectToHost("sensor.sandiego.edu", "54503");
-                
                 send_or_exit(fd,"AUTH sensorpass321\n",21);
 				recv_or_exit(fd,buff,BUFF_SIZE);
+                
+                printf("%s\n", buff);
 
-                 printf("%s\n", buff);
 
-                 memset(buff,0,BUFF_SIZE);
+                memset(buff,0,BUFF_SIZE);
+
+                //fd = connectToHost(ret_buff[1], ret_buff[2]);
+
+                send_or_exit(fd, "AIR TEMPERATURE\n", 16);
+                recv_or_exit(fd,buff,BUFF_SIZE);
+                
+                memset(buff,0,BUFF_SIZE);
                  
                  close(fd);
 
