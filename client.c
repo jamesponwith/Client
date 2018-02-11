@@ -17,6 +17,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <time.h>
+#include "parse_args.h"
 
 #define _XOPEN_SOURCE 600
 
