@@ -29,141 +29,61 @@ int connectToHost(char *hostname, char *port);
 void mainLoop(int fd);
 void send_or_exit(int fd, char *buff, size_t buff_len);
 void recv_or_exit(int fd, char *buff, size_t max_len);
+void sensorInfo(int fd, char *selection);
 
 int main() {
     printf("%s\n", "WELCOME TO COMP 375 SENSOR NETWORK :)");
-	printf("\n\n");
-    int fd; // = connectToHost("comp375.sandiego.edu", "44144");
+    printf("\n\n");
+    int fd; 
     fd = connectToHost("comp375.sandiego.edu", "47789");
     mainLoop(fd);
-    char buff[BUFF_SIZE];
-    memset(buff,0,BUFF_SIZE);
     close(fd);
     return 0;
 }  
-/*
-
-    send_or_exit(fd,"  ",4);
-
-    recv_or_exit(fd,buff,BUFF_SIZE);
-
-  //  char tmp_buff1[BUFF_SIZE];
-  //  sscanf(buff,"ONLINE - %d",(int*)BUFF_SIZE);
-
-  //  printf("The server says: %s\n", tmp_buff1);
-  //  memset(buff,0,BUFF_SIZE);
-
-*/
 
 void mainLoop(int fd) {
     while(1) {
-		long selection = prompt();
-        char buff[BUFF_SIZE];
-        memset(buff,0,BUFF_SIZE);
-        char *ret_buff[BUFF_SIZE];
-        memset(ret_buff,0,BUFF_SIZE);
+        long selection = prompt();
+        char *selec;
         switch(selection) {
-			case 1:
-				// printf("\n%s\n\n", "Temp is ....");
-                
-                send_or_exit(fd,"AUTH password123\n",17);
-                recv_or_exit(fd,buff,BUFF_SIZE);
-
-                printf("%s\n", buff);
-                parseArguments(buff, ret_buff);
-                
-                            
-                unsigned int j = 0;
-                while(ret_buff[j] != NULL) {
-                    printf("%s\n", ret_buff[j]);
-                    j++;
-                }
-
-                memset(buff,0,BUFF_SIZE);
-
-                fd = connectToHost(ret_buff[1], ret_buff[2]);
-
-                send_or_exit(fd,"AUTH sensorpass321\n",21);
-				recv_or_exit(fd,buff,BUFF_SIZE);
-                
-                printf("%s\n", buff);
-
-                memset(buff,0,BUFF_SIZE);
-
-                //fd = connectToHost(ret_buff[1], ret_buff[2]);
-
-                send_or_exit(fd, "AIR TEMPERATURE\n", 17);
-                recv_or_exit(fd,buff,BUFF_SIZE);
-               
-                printf("%s\n",buff);
-                
-                memset(ret_buff,0,BUFF_SIZE);
-                parseArguments(buff,ret_buff);
-
-                printf("%s%s%s\n",ret_buff[0],ret_buff[1], ret_buff[2]);
-                time_t time;
-                time = strtoul(ret_buff[0],NULL,0);
-
-                printf("%s","The AIR TEMPERATURE as of: ");
-                printf("%s%s",ctime(&time)," is "); 
-                printf("%s%s\n",ret_buff[1],ret_buff[2]);
-
-                memset(buff,0,BUFF_SIZE);
-                
-                send_or_exit(fd,"CLOSE\n",BUFF_SIZE);
-                recv_or_exit(fd,buff,BUFF_SIZE);
-
-                printf("%s\n",buff);
-
-                memset(buff,0,BUFF_SIZE);
-
+            case 1:
+                selec = "AIR TEMPERATURE";
+                sensorInfo(fd, selec);
                 close(fd);
-
+                fd = connectToHost("comp375.sandiego.edu", "47789");
                 break;
-
-			case 2:
-				printf("\n%s\n\n", "Wind is ....");
-			
-                send_or_exit(fd,"RELATIVE HUMIDITY",4);
-
-                recv_or_exit(fd,buff,BUFF_SIZE);
-
-                memset(buff,0,BUFF_SIZE);
-
+            case 2:
+                selec = "RELATIVE HUMIDITY";
+                sensorInfo(fd, selec);
+                close(fd);
+                fd = connectToHost("comp375.sandiego.edu", "47789");
                 break;
-
-			case 3:
-				printf("\n%s\n\n","Something is....");
-				
-                send_or_exit(fd,"WIND SPEED",4);
-
-                recv_or_exit(fd,buff,BUFF_SIZE);
-
-                memset(buff,0,BUFF_SIZE);
-                
+            case 3:
+                selec = "WIND SPEED";
+                sensorInfo(fd, selec);
+                close(fd);
+                fd = connectToHost("comp375.sandiego.edu", "47789"); 
                 break;
-			
             case 4:
-				printf("\n%s\n\n","GOODBYE!!");
-			    close(fd);
+                printf("\n%s\n\n","GOODBYE!!");
+                close(fd);
                 exit(0);
                 break;
-            
             default:
-				printf("\n\n%s\n\n","***INVALID OPTION");
-		}
-	}
+                printf("\n\n%s\n\n","***INVALID OPTION");
+        }
+    }
 }
 
 /**
  * Displays the menu
  */
 void menu() {
-	printf("%s\n\n", "Which sensor would you like to access: ");
-	printf("%s\n", "\t(1)	Air Temperature.");
-	printf("%s\n", "\t(2)	Relative Humidity.");
-	printf("%s\n", "\t(3)	Wind Speed.");
-	printf("%s\n\n", "\t(4)	Quit Program.");
+    printf("%s\n\n", "Which sensor would you like to access: ");
+    printf("%s\n", "\t(1)	Air Temperature.");
+    printf("%s\n", "\t(2)	Relative Humidity.");
+    printf("%s\n", "\t(3)	Wind Speed.");
+    printf("%s\n\n", "\t(4)	Quit Program.");
 }
 
 /**
@@ -188,11 +108,11 @@ long prompt() {
             exit(1);
         }
     }
-    
+
     // get rid of newline, if there is one
     char *new_line = strchr(input, '\n');
     if(new_line != NULL) new_line[0] = '\0';
-    
+
     // convert string to a long int
     char *end;
     long selection = strtol(input, &end, 10);
@@ -225,8 +145,8 @@ int connectToHost(char *hostname, char *port) {
     }
 
     int fd = socket(servinfo -> ai_family, servinfo -> ai_socktype, servinfo ->
-                ai_protocol);
-    
+            ai_protocol);
+
     if(fd == -1) {
         perror("socket");
         exit(1);
@@ -250,12 +170,6 @@ void send_or_exit(int fd, char *buff, size_t buff_len) {
         perror("Send");
         exit(1);
     }
-    
-    // TODO: if sent < buff_len, do another send to finish sending data
-    if(sent < (int) buff_len) {
-        send(fd, buff, buff_len, 0);
-    }
-
 }
 
 void recv_or_exit(int fd, char *buff, size_t max_len) {
@@ -270,4 +184,52 @@ void recv_or_exit(int fd, char *buff, size_t max_len) {
     }
 }
 
+/**
+ * Handles selection option to communicate with the sensor server
+ * to retrieve desired information
+ *
+ * @param fd The socket file descriptor to communicate with the server
+ * @param *selection Depending on the menu option the necessary server message will be passed in the switch menu (ex. "AIR TEMPERATURE")
+ */
+void sensorInfo(int fd, char *selection) {
 
+    char buff[BUFF_SIZE];
+    char *ret_buff[BUFF_SIZE];
+
+    send_or_exit(fd,"AUTH password123\n",17);
+    recv_or_exit(fd,buff,BUFF_SIZE);
+
+    parseArguments(buff, ret_buff); // Parse server response
+
+    memset(buff,0,BUFF_SIZE); // Reset buffer for next message
+    
+    fd = connectToHost(ret_buff[1], ret_buff[2]); // Connect to sensor server and sensor port
+    
+    send_or_exit(fd,"AUTH sensorpass321\n",21); // Send password to sensor
+    recv_or_exit(fd,buff,BUFF_SIZE); // Recieve server message
+
+    memset(buff,0,BUFF_SIZE); // Reset buffer for next message
+
+    send_or_exit(fd, selection, 17); // Request specific sensor information with selection 
+    recv_or_exit(fd,buff,BUFF_SIZE); // Recieve data
+
+    memset(ret_buff,0,BUFF_SIZE); // Reset buffer for next message
+    
+    parseArguments(buff,ret_buff); // Parse the data for display
+
+    time_t time; // Create time object to convert EPOCH time to readable time 
+    time = strtoul(ret_buff[0],NULL,0); // Convert String to Int
+
+    // Print and format data
+    printf("\n%s%s%s","The last ",selection," reading was ");
+    printf("%s%s%s",ret_buff[1],ret_buff[2],", taken at ");
+    printf("%s\n",ctime(&time)); 
+
+    memset(buff,0,BUFF_SIZE); // Reset buffer
+
+    send_or_exit(fd,"CLOSE\n",BUFF_SIZE); // Send CLOSE message
+    recv_or_exit(fd,buff,BUFF_SIZE);
+
+    memset(buff,0,BUFF_SIZE); // Reset buffer
+    memset(ret_buff,0,BUFF_SIZE);
+}
