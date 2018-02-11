@@ -128,10 +128,6 @@ void mainLoop(int fd) {
 
                 recv_or_exit(fd,buff,BUFF_SIZE);
 
-                char tmp_buff2[BUFF_SIZE];
-                sscanf(buff,"ONLINE - %d",(int*)BUFF_SIZE);
-
-                printf("The server says: %s\n", tmp_buff2);
                 memset(buff,0,BUFF_SIZE);
 
                 break;
@@ -143,10 +139,6 @@ void mainLoop(int fd) {
 
                 recv_or_exit(fd,buff,BUFF_SIZE);
 
-                char tmp_buff3[BUFF_SIZE];
-                sscanf(buff,"ONLINE - %d",(int*)BUFF_SIZE);
-
-                printf("The server says: %s\n", tmp_buff3);
                 memset(buff,0,BUFF_SIZE);
                 
                 break;
