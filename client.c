@@ -117,7 +117,7 @@ void mainLoop(int fd) {
 
                 memset(buff,0,BUFF_SIZE);
 
-                 close(fd);
+                close(fd);
 
                 break;
 
@@ -236,6 +236,7 @@ int connectToHost(char *hostname, char *port) {
         perror("connect");
         exit(1);
     }
+    freeaddrinfo(servinfo);
     return fd;
 }
 
