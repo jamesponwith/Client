@@ -60,6 +60,8 @@ void mainLoop(int fd) {
 		long selection = prompt();
         char buff[BUFF_SIZE];
         memset(buff,0,BUFF_SIZE);
+        char *ret_buff[BUFF_SIZE];
+        memset(ret_buff,0,BUFF_SIZE);
         switch(selection) {
 			case 1:
 				// printf("\n%s\n\n", "Temp is ....");
@@ -70,6 +72,13 @@ void mainLoop(int fd) {
                 printf("%s\n", buff);
               //  char tmp_buff1[BUFF_SIZE];
               //  sscanf(buff,"ONLINE - %d",(int*)BUFF_SIZE);
+                parseArguments(buff, ret_buff);
+              
+                unsigned int j = 0;
+                while(ret_buff[j] != NULL) {
+                    printf("%s\n", ret_buff[j]);
+                    j++;
+                }
 
               //  printf("The server says: %s\n", tmp_buff1);
                 memset(buff,0,BUFF_SIZE);
