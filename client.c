@@ -26,47 +26,51 @@
 
 void menu();
 long prompt();
-void mainLoop(int fd);
-void sensorInfo(int fd, char *selection);
+void mainLoop();
+//void sensorInfo(int fd, char *selection);
+void sensorInfo(char *selection);
 int connectToHost(char *hostname, char *port);
 void recv_or_exit(int fd, char *buff, size_t max_len);
 void send_or_exit(int fd, char *buff, size_t buff_len);
 
 int main() {
     printf("%s\n\n\n", "WELCOME TO COMP 375 SENSOR NETWORK :)");
-    int fd; 
-    fd = connectToHost("comp375.sandiego.edu", "47789");
-    mainLoop(fd);
-    close(fd);
+    //int fd; 
+    //fd = connectToHost("comp375.sandiego.edu", "47789");
+    //mainLoop(fd);
+    mainLoop();
+    //close(fd);
     return 0;
 }  
 
-void mainLoop(int fd) {
+void mainLoop() {
     while(1) {
         long selection = prompt();
         char *selec; // Provide sensorInfo() with the correct server message 
         switch(selection) {
             case 1:
                 selec = "AIR TEMPERATURE"; // Option specific message
-                sensorInfo(fd, selec);
-                close(fd);
-                fd = connectToHost("comp375.sandiego.edu", "47789");
+                //sensorInfo(fd, selec);
+                sensorInfo(selec);
+                //close(fd);
+                //fd = connectToHost("comp375.sandiego.edu", "47789");
                 break;
             case 2:
                 selec = "RELATIVE HUMIDITY";
-                sensorInfo(fd, selec);
-                close(fd);
-                fd = connectToHost("comp375.sandiego.edu", "47789");
+                sensorInfo(selec);
+                //sensorInfo(fd, selec);
+                //close(fd);
+                //fd = connectToHost("comp375.sandiego.edu", "47789");
                 break;
             case 3:
                 selec = "WIND SPEED";
-                sensorInfo(fd, selec);
-                close(fd);
-                fd = connectToHost("comp375.sandiego.edu", "47789"); 
+                sensorInfo(selec);
+                //sensorInfo(fd, selec);
+                //close(fd);
+                //fd = connectToHost("comp375.sandiego.edu", "47789"); 
                 break;
             case 4:
                 printf("\n%s\n\n","GOODBYE!!");
-                close(fd);
                 exit(0);
                 break;
             default:
@@ -206,10 +210,12 @@ void recv_or_exit(int fd, char *buff, size_t max_len) {
  * @param fd The socket file descriptor to communicate with the server
  * @param *selection Depending on the menu option the necessary server message will be passed in the switch menu (ex. "AIR TEMPERATURE")
  */
-void sensorInfo(int fd, char *selection) {
+void sensorInfo(char *selection) {
 
     char buff[BUFF_SIZE];
     char *ret_buff[BUFF_SIZE];
+
+    int fd = connectToHost("comp375.sandiego.edu", "47789");
 
     send_or_exit(fd,"AUTH password123\n",17); // Send server message
     recv_or_exit(fd,buff,BUFF_SIZE); // Receive server response in buff
