@@ -1,0 +1,11 @@
+Author: James Ponwith
+
+Hours: 12
+
+Bucks: 0
+
+Comments:
+
+I enjoyed learning how a server and client communicate and the chance
+to reverse engineer the program using Wireshark. It was very satisfying to successfully
+connect to the server.
