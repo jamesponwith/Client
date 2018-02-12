@@ -21,11 +21,9 @@
 #include <string.h>
 #include <unistd.h>
 #include <arpa/inet.h>
-
 #include "parse_args.h"
 
 #define BUFF_SIZE 1024
-
 #define _XOPEN_SOURCE 600
 
 void menu();
@@ -204,7 +202,7 @@ void recv_or_exit(int fd, char *buff, size_t max_len) {
 void sensorInfo(char *selection) {
 
     char buff[BUFF_SIZE];
-    char *ret_buff[BUFF_SIZE];
+    char *ret_buff[BUFF_SIZE]; // Used to hold parsed arguments
 
     int fd = connectToHost("comp375.sandiego.edu", "47789");
 
@@ -213,20 +211,20 @@ void sensorInfo(char *selection) {
 
     parseArguments(buff, ret_buff); // Parse server response
 
-    memset(buff,0,BUFF_SIZE); // Reset buffer for next message
+    memset(buff,0,BUFF_SIZE); // Reset buff
     
     fd = connectToHost(ret_buff[1], ret_buff[2]); // Connect to sensor server and sensor port
     
     send_or_exit(fd,"AUTH sensorpass321\n",21); 
     recv_or_exit(fd,buff,BUFF_SIZE); 
 
-    memset(buff,0,BUFF_SIZE); 
+    memset(buff,0,BUFF_SIZE);
 
     send_or_exit(fd, selection, 17); // Request specific sensor information with selection variable 
     recv_or_exit(fd,buff,BUFF_SIZE); // Recieve data
 
-    memset(ret_buff,0,BUFF_SIZE); 
-    
+    memset(ret_buff,0,BUFF_SIZE); // Reset ret_buff
+
     parseArguments(buff,ret_buff); // Parse the data for display
 
     time_t time; // Create time object to convert EPOCH time to readable time 
