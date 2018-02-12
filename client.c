@@ -2,8 +2,12 @@
  * James Ponwith
  * Project 01
  * Network Application
- * Using Wireshark, this program was
- * reverse engineered.
+ *
+ * This application uses Sockets to communicate
+ * between client and server. Using Wireshark, 
+ * the project was reverse engineered by 
+ * analyzing the packages and protocols collected
+ * from the provided executable. 
  *
  */
 
@@ -56,7 +60,7 @@ void mainLoop() {
                 sensorInfo(selec);
                 break;
             case 4:
-                printf("\n%s\n\n","GOODBYE!!");
+                printf("%s\n","GOODBYE!!");
                 exit(0);
                 break;
             default:
