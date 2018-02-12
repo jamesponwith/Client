@@ -27,7 +27,6 @@
 void menu();
 long prompt();
 void mainLoop();
-//void sensorInfo(int fd, char *selection);
 void sensorInfo(char *selection);
 int connectToHost(char *hostname, char *port);
 void recv_or_exit(int fd, char *buff, size_t max_len);
@@ -35,11 +34,7 @@ void send_or_exit(int fd, char *buff, size_t buff_len);
 
 int main() {
     printf("%s\n\n\n", "WELCOME TO COMP 375 SENSOR NETWORK :)");
-    //int fd; 
-    //fd = connectToHost("comp375.sandiego.edu", "47789");
-    //mainLoop(fd);
     mainLoop();
-    //close(fd);
     return 0;
 }  
 
@@ -50,24 +45,15 @@ void mainLoop() {
         switch(selection) {
             case 1:
                 selec = "AIR TEMPERATURE"; // Option specific message
-                //sensorInfo(fd, selec);
                 sensorInfo(selec);
-                //close(fd);
-                //fd = connectToHost("comp375.sandiego.edu", "47789");
                 break;
             case 2:
                 selec = "RELATIVE HUMIDITY";
                 sensorInfo(selec);
-                //sensorInfo(fd, selec);
-                //close(fd);
-                //fd = connectToHost("comp375.sandiego.edu", "47789");
                 break;
             case 3:
                 selec = "WIND SPEED";
                 sensorInfo(selec);
-                //sensorInfo(fd, selec);
-                //close(fd);
-                //fd = connectToHost("comp375.sandiego.edu", "47789"); 
                 break;
             case 4:
                 printf("\n%s\n\n","GOODBYE!!");
@@ -99,6 +85,7 @@ long prompt() {
     // Print menu options
     menu();
     printf("%s","Selection: ");
+    
     // Read in value from standard input
     char input[10];
     memset(input, 0, 10); // set all values of input[] to '\0'
@@ -253,4 +240,5 @@ void sensorInfo(char *selection) {
 
     memset(buff,0,BUFF_SIZE); 
     memset(ret_buff,0,BUFF_SIZE);
+    close(fd);
 }
