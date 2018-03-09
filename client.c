@@ -11,6 +11,8 @@
  *
  */
 
+#define _XOPEN_SOURCE 600
+
 #include <time.h>
 #include <netdb.h>
 #include <errno.h>
@@ -24,7 +26,6 @@
 #include "parse_args.h"
 
 #define BUFF_SIZE 1024
-#define _XOPEN_SOURCE 600
 
 void menu();
 long prompt();
@@ -223,7 +224,7 @@ void sensorInfo(char *selection) {
     send_or_exit(fd, selection, 17); // Request specific sensor information with selection variable 
     recv_or_exit(fd,buff,BUFF_SIZE); // Recieve data
 
-    memset(ret_buff,0,BUFF_SIZE); // Reset ret_buff
+    memset(ret_buff,0,sizeof(char*)*BUFF_SIZE); // Reset ret_buff
 
     parseArguments(buff,ret_buff); // Parse the data for display
 
@@ -241,6 +242,6 @@ void sensorInfo(char *selection) {
     recv_or_exit(fd,buff,BUFF_SIZE);
 
     memset(buff,0,BUFF_SIZE); 
-    memset(ret_buff,0,BUFF_SIZE);
+    memset(ret_buff,0,sizeof(char*)*BUFF_SIZE);
     close(fd);
 }
